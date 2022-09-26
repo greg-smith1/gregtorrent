@@ -1,0 +1,22 @@
+{
+  "name": "gregtorrent",
+  "version": "0.0.1",
+  "description": "Basic implementation of BitTorrent using JavaScript (TypeScript to follow)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greg-smith1/gregtorrent.git"
+  },
+  "author": "Greg Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/greg-smith1/gregtorrent/issues"
+  },
+  "homepage": "https://github.com/greg-smith1/gregtorrent#readme",
+  "dependencies": {
+    "bencode": "^2.0.3"
+  }
+}
