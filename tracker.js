@@ -7,6 +7,7 @@ const crypto = require('crypto')
 
 const torrentParser = require('./torrent-parser');
 const util = require('./util');
+const { setTimeout } = require('timers/promises');
 
 module.exports.getPeers = (torrent, callback) => {
   const socket = dgram.createSocket('udp4');
@@ -115,3 +116,22 @@ function parseAnnounceResp(resp) {
     })
   }
 };
+
+// TODO: retry
+// params: socket, timeout (initial is 0)
+// sets a timeout for n seconds, after which function will re-call with a larger timeout
+// spec for bittorrent says timeout is 2^n * 15 seconds, with n maxing out at 8.
+function udpSendWithRetry(socket, message, rawUrl, numRetries, callback=()=>{}) {
+  if (numRetries >= 8) {
+    udpSend(socket, message, rawUrl, callback);
+  } else {
+    // this feels real messy, TODO: clean up
+    const retrySeconds = (numRetries**2) * 15000;
+    const retryTimeout = setTimeout(() => udpSendWithRetry(socket, message, rawUrl, numRetries+1, callback), retrySeconds);
+    const callbackAndClear = () => {
+      callback();
+      clearTimeout(retryTimeout);
+    }
+    udpSend(socket, message, rawUrl, callbackAndClear);
+  }
+}
